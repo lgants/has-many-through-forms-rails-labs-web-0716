@@ -1,1 +1,28 @@
 
+<div class=post-content>
+  <%= @post.title %><br>
+  <%= @post.content %><br>
+  <% @post.comments.each do |comment| %>
+    <%= comment.user.username %>
+    <%= " says: " %>
+    <%= comment.content %><br>
+  <% end %><br>
+  <% @post.categories.each do  |category| %>
+    <%= category.name %>
+  <% end %><br>
+  <%= @post.commenters.uniq.each do |commenter| %>
+    <%= link_to commenter.username, user_path(commenter) %>
+  <% end %>
+</div>
+
+
+<%= form_for @comment do |f| %>
+  <%= f.label "Comment" %>
+  <%= f.text_area :content %>
+  <%= f.fields_for :user, User.new do |user| %>
+    Choose username: <%= f.collection_select :user_id, User.all, :id, :username, :include_blank => true %><br>
+    Create username: <%= user.text_field :username %><br>
+  <% end %>
+  <%= f.hidden_field :post_id, :value => @post.id %>
+  <%= f.submit %>
+<% end %>

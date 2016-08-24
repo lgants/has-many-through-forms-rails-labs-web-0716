@@ -1,8 +1,15 @@
-class CommentsController < ApplicationController
+require 'pry'
 
+class CommentsController < ApplicationController
   def create
     comment = Comment.create(comment_params)
-    redirect_to comment.post
+    if params[:comment][:user_id].empty?
+      @user = User.new
+      @user.username = params[:comment][:user_attributes][:username]
+      @user.comments << comment
+      @user.save
+    end
+    redirect_to post_path(comment.post_id)
   end
 
   private
